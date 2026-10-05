@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Gold (XAUUSD) — Market Structure Diagrams</title>
+<style>
+  :root { --bg:#0b0e11; --card:#131722; --grid:#1e252e; --txt:#d1d4dc; --mute:#8a93a3; --up:#26a69a; --dn:#ef5350; --gold:#f5c542; --blue:#4f8ef7; --org:#ff9f43; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:24px; background:var(--bg); color:var(--txt); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height:1.45; }
+  h1 { font-size:22px; margin:0 0 4px; color:var(--gold); }
+  .sub { color:var(--mute); margin-bottom:20px; font-size:14px; }
+  .card { background:var(--card); border:1px solid var(--grid); border-radius:10px; padding:16px 18px; margin-bottom:22px; }
+  .card h2 { font-size:16px; margin:0 0 6px; }
+  .card h2 span { color:var(--gold); margin-right:8px; }
+  .card p { margin:0 0 12px; color:var(--mute); font-size:13.5px; }
+  svg { width:100%; height:auto; display:block; background:#0f131a; border-radius:8px; }
+  .price { fill:none; stroke:#e6e9ef; stroke-width:2.5; stroke-linejoin:round; stroke-linecap:round; }
+  .lbl { font-size:13px; font-weight:700; fill:#e6e9ef; }
+  .hh { fill:var(--up); } .ll { fill:var(--dn); } .org { fill:var(--org); }
+  .note { font-size:12px; fill:var(--mute); }
+  .notew { font-size:12px; fill:#e6e9ef; }
+  .dash { stroke-dasharray:6 5; stroke-width:1.5; fill:none; }
+  .title { font-size:14px; font-weight:700; fill:var(--gold); }
+  .pt { fill:#0f131a; stroke:#e6e9ef; stroke-width:2; }
+  .wick { stroke-width:1.5; }
+  .key { display:grid; grid-template-columns: 1fr 1fr; gap:8px 18px; margin-top:12px; font-size:13px; }
+  .key b { color:#e6e9ef; }
+  .warn { border-left:3px solid var(--dn); padding:8px 12px; background:rgba(239,83,80,.08); border-radius:6px; font-size:13px; margin-top:12px; }
+  .tip { border-left:3px solid var(--up); padding:8px 12px; background:rgba(38,166,154,.08); border-radius:6px; font-size:13px; margin-top:12px; }
+  .box { fill:#1a2130; stroke:#2a3340; stroke-width:1.5; rx:8; }
+  .boxg { fill:rgba(38,166,154,.18); stroke:#26a69a; stroke-width:1.5; rx:8; }
+  .bt { font-size:11.5px; font-weight:700; fill:var(--gold); text-anchor:middle; }
+  .bv { font-size:12.5px; fill:#e6e9ef; text-anchor:middle; }
+  .bs { font-size:11px; fill:var(--mute); text-anchor:middle; }
+</style>
+</head>
+<body>
+<h1>Gold (XAUUSD) — How the $4k trade actually works</h1>
+<div class="sub">Visual cheat-sheet: market structure → liquidity → setup → position sizing → sessions → prop-firm survival. Gold ≈ $4,140/oz today.</div>
+
+<!-- ============ 1. MARKET STRUCTURE ============ -->
+<div class="card">
+<h2><span>1</span>Market structure — the only thing that matters first</h2>
+<p>Price moves in swings. Label every swing high and low. The <b>relationship</b> between them tells you who is in control and which direction you're allowed to trade.</p>
+<svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#1e252e" stroke-width="1">
+    <line x1="0" y1="80" x2="900" y2="80"/><line x1="0" y1="160" x2="900" y2="160"/><line x1="0" y1="240" x2="900" y2="240"/>
+  </g>
+  <line x1="450" y1="0" x2="450" y2="320" stroke="#2a3340" stroke-width="2"/>
+  <!-- UPTREND -->
+  <text x="20" y="28" class="title">UPTREND: HH + HL → bias LONG (buy the dips)</text>
+  <g class="dash" stroke="#26a69a">
+    <line x1="110" y1="190" x2="220" y2="190"/><line x1="220" y1="140" x2="330" y2="140"/>
+  </g>
+  <g class="dash" stroke="#26a69a" opacity=".55">
+    <line x1="150" y1="225" x2="260" y2="225"/><line x1="260" y1="180" x2="370" y2="180"/>
+  </g>
+  <polyline class="price" points="40,280 110,190 150,225 220,140 260,180 330,95 370,135 420,50"/>
+  <circle class="pt" cx="40" cy="280" r="4"/><circle class="pt" cx="110" cy="190" r="4"/><circle class="pt" cx="150" cy="225" r="4"/>
+  <circle class="pt" cx="220" cy="140" r="4"/><circle class="pt" cx="260" cy="180" r="4"/><circle class="pt" cx="330" cy="95" r="4"/>
+  <circle class="pt" cx="370" cy="135" r="4"/><circle class="pt" cx="420" cy="50" r="4"/>
+  <text x="30" y="300" class="lbl">L</text>
+  <text x="100" y="178" class="lbl">H</text>
+  <text x="140" y="245" class="lbl hh">HL</text>
+  <text x="208" y="128" class="lbl hh">HH</text>
+  <text x="250" y="200" class="lbl hh">HL</text>
+  <text x="318" y="83" class="lbl hh">HH</text>
+  <text x="360" y="155" class="lbl hh">HL</text>
+  <text x="430" y="55" class="lbl hh">HH</text>
+  <text x="120" y="305" class="note">Every low holds ABOVE the previous low = buyers in control</text>
+  <!-- DOWNTREND -->
+  <g transform="translate(460,0)">
+    <text x="20" y="28" class="title">DOWNTREND: LH + LL → bias SHORT (sell the rallies)</text>
+    <g class="dash" stroke="#ef5350">
+      <line x1="110" y1="140" x2="220" y2="140"/><line x1="220" y1="190" x2="330" y2="190"/>
+    </g>
+    <g class="dash" stroke="#ef5350" opacity=".55">
+      <line x1="150" y1="105" x2="260" y2="105"/><line x1="260" y1="150" x2="370" y2="150"/>
+    </g>
+    <polyline class="price" points="40,50 110,140 150,105 220,190 260,150 330,235 370,195 420,280"/>
+    <circle class="pt" cx="40" cy="50" r="4"/><circle class="pt" cx="110" cy="140" r="4"/><circle class="pt" cx="150" cy="105" r="4"/>
+    <circle class="pt" cx="220" cy="190" r="4"/><circle class="pt" cx="260" cy="150" r="4"/><circle class="pt" cx="330" cy="235" r="4"/>
+    <circle class="pt" cx="370" cy="195" r="4"/><circle class="pt" cx="420" cy="280" r="4"/>
+    <text x="50" y="56" class="lbl">H</text>
+    <text x="100" y="162" class="lbl">L</text>
+    <text x="140" y="95" class="lbl ll">LH</text>
+    <text x="208" y="212" class="lbl ll">LL</text>
+    <text x="250" y="140" class="lbl ll">LH</text>
+    <text x="318" y="257" class="lbl ll">LL</text>
+    <text x="360" y="185" class="lbl ll">LH</text>
+    <text x="402" y="292" class="lbl ll">LL</text>
+    <text x="30" y="310" class="note">Every high fails BELOW the previous high = sellers in control</text>
+  </g>
+</svg>
+<div class="key">
+  <div><b>HH</b> Higher High &nbsp;·&nbsp; <b>HL</b> Higher Low → uptrend</div>
+  <div><b>LH</b> Lower High &nbsp;·&nbsp; <b>LL</b> Lower Low → downtrend</div>
+</div>
+<div class="tip">Rule #1: you only take trades <b>in the direction of the structure</b>. In an uptrend you buy HLs; you never short a HH just because "it's high".</div>
+</div>
+
+<!-- ============ 2. BOS vs CHoCH ============ -->
+<div class="card">
+<h2><span>2</span>BOS vs CHoCH — "is the trend continuing or flipping?"</h2>
+<p><b>BOS</b> (Break of Structure) = price breaks the <i>previous high</i> in an uptrend → trend confirmed, keep buying dips. <b>CHoCH</b> (Change of Character) = price breaks the <i>last higher low</i> → first warning the trend is over.</p>
+<svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#1e252e" stroke-width="1">
+    <line x1="0" y1="100" x2="900" y2="100"/><line x1="0" y1="200" x2="900" y2="200"/><line x1="0" y1="300" x2="900" y2="300"/>
+  </g>
+  <rect x="30" y="50" width="490" height="310" fill="rgba(38,166,154,.07)"/>
+  <rect x="525" y="50" width="355" height="310" fill="rgba(239,83,80,.07)"/>
+  <text x="40" y="352" class="note">UPTREND PHASE — buy the dips (every HL)</text>
+  <text x="540" y="352" class="note">TREND FLIPPED — now you sell the rallies (LH)</text>
+  <!-- BOS lines -->
+  <g class="dash" stroke="#26a69a" stroke-width="2">
+    <line x1="120" y1="200" x2="215" y2="200"/>
+    <line x1="250" y1="150" x2="345" y2="150"/>
+  </g>
+  <text x="218" y="204" class="lbl hh">BOS</text>
+  <text x="348" y="154" class="lbl hh">BOS</text>
+  <!-- failed high line -->
+  <line x1="380" y1="110" x2="520" y2="110" class="dash" stroke="#8a93a3"/>
+  <text x="515" y="135" class="lbl org">LH — failed to break the HH ⚠</text>
+  <!-- CHoCH line -->
+  <line x1="430" y1="165" x2="530" y2="165" class="dash" stroke="#ff9f43" stroke-width="2"/>
+  <circle cx="525" cy="165" r="6" fill="none" stroke="#ff9f43" stroke-width="2"/>
+  <text x="536" y="160" class="lbl org">CHoCH</text>
+  <!-- price -->
+  <polyline class="price" points="40,300 120,200 165,245 250,150 295,195 380,110 430,165 500,140 590,230 640,200 720,280 770,250 860,330"/>
+  <circle class="pt" cx="120" cy="200" r="4"/><circle class="pt" cx="165" cy="245" r="4"/><circle class="pt" cx="250" cy="150" r="4"/>
+  <circle class="pt" cx="295" cy="195" r="4"/><circle class="pt" cx="380" cy="110" r="4"/><circle class="pt" cx="430" cy="165" r="4"/>
+  <circle class="pt" cx="500" cy="140" r="4"/><circle class="pt" cx="640" cy="200" r="4"/><circle class="pt" cx="720" cy="280" r="4"/>
+  <circle class="pt" cx="770" cy="250" r="4"/><circle class="pt" cx="860" cy="330" r="4"/>
+  <text x="112" y="188" class="lbl">H</text>
+  <text x="158" y="265" class="lbl">L</text>
+  <text x="238" y="138" class="lbl hh">HH</text>
+  <text x="284" y="215" class="lbl hh">HL</text>
+  <text x="368" y="98" class="lbl hh">HH</text>
+  <text x="420" y="185" class="lbl hh">HL</text>
+  <text x="630" y="188" class="lbl ll">LH</text>
+  <text x="708" y="300" class="lbl ll">LL</text>
+  <text x="760" y="238" class="lbl ll">LH</text>
+  <text x="840" y="350" class="lbl ll">LL</text>
+</svg>
+<div class="key">
+  <div><b style="color:#26a69a">Green dashed = BOS</b> — continuation. Each one is permission to look for the next long.</div>
+  <div><b style="color:#ff9f43">Orange dashed = CHoCH</b> — the last HL gets taken out. Stop buying. Wait for a LH, then look for shorts.</div>
+</div>
+<div class="warn">Beginner trap: the first red candle after a HH is <b>not</b> a CHoCH. It only counts when price <b>closes</b> below the most recent higher low.</div>
+</div>
+
+<!-- ============ 3. LIQUIDITY SWEEP ============ -->
+<div class="card">
+<h2><span>3</span>Liquidity sweep — why gold "stop-hunts" you, and how to use it</h2>
+<p>Gold loves to spike through obvious levels, trigger everyone's stop-losses, then reverse. Once you can see where the stops are, the spike becomes your entry instead of your loss.</p>
+<svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#1e252e" stroke-width="1">
+    <line x1="0" y1="80" x2="900" y2="80"/><line x1="0" y1="160" x2="900" y2="160"/><line x1="0" y1="240" x2="900" y2="240"/>
+  </g>
+  <!-- target (prior high) -->
+  <line x1="50" y1="110" x2="760" y2="110" class="dash" stroke="#26a69a"/>
+  <text x="655" y="105" class="lbl hh">TARGET = prior high</text>
+  <!-- equal lows -->
+  <line x1="115" y1="230" x2="445" y2="230" class="dash" stroke="#f5c542" stroke-width="2"/>
+  <g stroke="#ef5350" stroke-width="2">
+    <line x1="128" y1="237" x2="136" y2="245"/><line x1="136" y1="237" x2="128" y2="245"/>
+    <line x1="272" y1="237" x2="280" y2="245"/><line x1="280" y1="237" x2="272" y2="245"/>
+    <line x1="380" y1="237" x2="388" y2="245"/><line x1="388" y1="237" x2="380" y2="245"/>
+  </g>
+  <text x="120" y="262" class="note">Equal lows → stop-losses stack just below = LIQUIDITY</text>
+  <!-- sweep box -->
+  <rect x="442" y="198" width="28" height="64" fill="rgba(255,159,67,.14)" stroke="#ff9f43" class="dash"/>
+  <text x="480" y="244" class="notew">SWEEP ↙ wick pierces the equal lows,</text>
+  <text x="480" y="261" class="notew">collects the stops, closes back ABOVE</text>
+  <!-- stop / entry -->
+  <line x1="440" y1="264" x2="705" y2="264" class="dash" stroke="#ef5350" stroke-width="2"/>
+  <text x="480" y="280" class="lbl ll">STOP — just below the sweep wick</text>
+  <line x1="476" y1="218" x2="705" y2="218" class="dash" stroke="#e6e9ef" stroke-width="2"/>
+  <text x="540" y="214" class="lbl">ENTRY — after 15m CHoCH confirms</text>
+  <!-- R bracket -->
+  <rect x="715" y="218" width="10" height="46" fill="#ef5350" opacity=".8"/>
+  <rect x="715" y="110" width="10" height="108" fill="#26a69a" opacity=".8"/>
+  <text x="732" y="245" class="lbl ll">1R</text>
+  <text x="732" y="168" class="lbl hh">~2.3R</text>
+  <!-- candles -->
+  <g class="wick">
+    <line x1="60" y1="110" x2="60" y2="170" stroke="#ef5350"/><rect x="50" y="120" width="20" height="40" fill="#ef5350"/>
+    <line x1="96" y1="150" x2="96" y2="215" stroke="#ef5350"/><rect x="86" y="160" width="20" height="40" fill="#ef5350"/>
+    <line x1="132" y1="195" x2="132" y2="230" stroke="#ef5350"/><rect x="122" y="200" width="20" height="22" fill="#ef5350"/>
+    <line x1="168" y1="185" x2="168" y2="231" stroke="#26a69a"/><rect x="158" y="190" width="20" height="32" fill="#26a69a"/>
+    <line x1="204" y1="158" x2="204" y2="195" stroke="#26a69a"/><rect x="194" y="165" width="20" height="25" fill="#26a69a"/>
+    <line x1="240" y1="160" x2="240" y2="200" stroke="#ef5350"/><rect x="230" y="165" width="20" height="30" fill="#ef5350"/>
+    <line x1="276" y1="190" x2="276" y2="230" stroke="#ef5350"/><rect x="266" y="195" width="20" height="29" fill="#ef5350"/>
+    <line x1="312" y1="195" x2="312" y2="231" stroke="#26a69a"/><rect x="302" y="200" width="20" height="24" fill="#26a69a"/>
+    <line x1="348" y1="195" x2="348" y2="222" stroke="#ef5350"/><rect x="338" y="200" width="20" height="15" fill="#ef5350"/>
+    <line x1="384" y1="210" x2="384" y2="230" stroke="#ef5350"/><rect x="374" y="215" width="20" height="11" fill="#ef5350"/>
+    <line x1="420" y1="205" x2="420" y2="229" stroke="#26a69a"/><rect x="410" y="212" width="20" height="14" fill="#26a69a"/>
+    <line x1="456" y1="203" x2="456" y2="258" stroke="#26a69a" stroke-width="2"/><rect x="446" y="206" width="20" height="14" fill="#26a69a"/>
+    <line x1="492" y1="165" x2="492" y2="212" stroke="#26a69a"/><rect x="482" y="170" width="20" height="36" fill="#26a69a"/>
+    <line x1="528" y1="132" x2="528" y2="176" stroke="#26a69a"/><rect x="518" y="140" width="20" height="30" fill="#26a69a"/>
+    <line x1="564" y1="136" x2="564" y2="160" stroke="#ef5350"/><rect x="554" y="140" width="20" height="15" fill="#ef5350"/>
+    <line x1="600" y1="100" x2="600" y2="160" stroke="#26a69a"/><rect x="590" y="110" width="20" height="45" fill="#26a69a"/>
+    <line x1="636" y1="78" x2="636" y2="118" stroke="#26a69a"/><rect x="626" y="85" width="20" height="25" fill="#26a69a"/>
+  </g>
+  <text x="60" y="312" class="note">① Retail sees "support" at the equal lows, buys, and parks stop-losses just underneath.</text>
+  <text x="60" y="332" class="note">② Big money needs those sell-stops to fill large BUY orders → price gets pushed below the lows to collect them.</text>
+  <text x="60" y="352" class="note">③ Stops collected → price snaps back. You enter AFTER the reclaim (never before), stop under the wick, target the prior high.</text>
+</svg>
+<div class="tip">Where are the stops? Below <b>equal lows</b>, above <b>equal highs</b>, below obvious trendlines, and at round numbers ($4,100, $4,150). Mark them before the session starts.</div>
+</div>
+
+<!-- ============ 4. THE SETUP ============ -->
+<div class="card">
+<h2><span>4</span>The setup your buddy trades — trend pullback into demand, 1:4 reward</h2>
+<p>Put diagrams 1–3 together. HTF uptrend → price pulls back into the zone the last impulse launched from → you buy with a tight stop and target the previous high. Real gold numbers below.</p>
+<svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#1e252e" stroke-width="1">
+    <line x1="0" y1="100" x2="900" y2="100"/><line x1="0" y1="200" x2="900" y2="200"/><line x1="0" y1="300" x2="900" y2="300"/>
+  </g>
+  <!-- R boxes -->
+  <rect x="400" y="150" width="470" height="140" fill="rgba(38,166,154,.15)"/>
+  <rect x="400" y="290" width="470" height="35" fill="rgba(239,83,80,.18)"/>
+  <text x="540" y="235" class="lbl hh">REWARD  +$40 × 100 oz × 1 lot = +$4,000  (4R)</text>
+  <text x="408" y="313" class="lbl ll">RISK  −$10 × 100 oz × 1 lot = −$1,000  (1R)</text>
+  <!-- demand zone -->
+  <rect x="165" y="269" width="580" height="35" fill="rgba(79,142,247,.16)" stroke="#4f8ef7" class="dash"/>
+  <text x="215" y="281" class="notew" style="font-size:11.5px;fill:#4f8ef7;font-weight:700">DEMAND ZONE (impulse origin)</text>
+  <!-- levels -->
+  <line x1="270" y1="150" x2="870" y2="150" class="dash" stroke="#26a69a" stroke-width="2"/>
+  <line x1="380" y1="290" x2="870" y2="290" class="dash" stroke="#e6e9ef" stroke-width="2"/>
+  <line x1="380" y1="325" x2="870" y2="325" class="dash" stroke="#ef5350" stroke-width="2"/>
+  <text x="762" y="146" class="lbl hh">TARGET $4,140</text>
+  <text x="762" y="286" class="lbl">ENTRY $4,100</text>
+  <text x="762" y="321" class="lbl ll">STOP $4,090</text>
+  <!-- price -->
+  <polyline class="price" points="40,335 130,215 180,290 270,150 330,205 400,286 450,268 520,215 590,170 650,150 690,128 740,158"/>
+  <circle class="pt" cx="130" cy="215" r="4"/><circle class="pt" cx="180" cy="290" r="4"/><circle class="pt" cx="270" cy="150" r="4"/>
+  <circle class="pt" cx="400" cy="286" r="5" style="stroke:#f5c542"/><circle class="pt" cx="650" cy="150" r="4"/>
+  <text x="118" y="205" class="lbl">H</text>
+  <text x="146" y="296" class="lbl hh">HL</text>
+  <text x="258" y="138" class="lbl hh">HH</text>
+  <text x="392" y="345" class="lbl hh">Pullback = new HL → BUY here</text>
+  <text x="40" y="378" class="note">Rule: in an uptrend you only look for LONGS, at a zone, after a pullback — you never chase the HH.</text>
+  <text x="40" y="398" class="note">Stop goes BELOW the zone (= the idea is wrong). Target = the prior HH, because sellers' stops (liquidity) sit right above it.</text>
+</svg>
+<div class="key">
+  <div><b>Why the zone works:</b> it's where big buyers filled last time and left unfilled orders. Price returning there tends to bounce.</div>
+  <div><b>Why 1:4 works:</b> you can lose 3 of 4 trades and still break even. Your buddy isn't right more often — he's paid more when he's right.</div>
+</div>
+</div>
+
+<!-- ============ 4b. LTF TRIGGER ============ -->
+<div class="card">
+<h2><span>4b</span>The entry trigger — zoom to 15m inside the zone</h2>
+<p>You don't buy just because price touched the zone. You wait for the 15m chart to <b>flip</b>: it was making LH/LL on the way down, then it breaks a lower high (CHoCH) and confirms (BOS). That's the trigger.</p>
+<svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#1e252e" stroke-width="1">
+    <line x1="0" y1="70" x2="900" y2="70"/><line x1="0" y1="140" x2="900" y2="140"/><line x1="0" y1="210" x2="900" y2="210"/>
+  </g>
+  <rect x="40" y="205" width="820" height="40" fill="rgba(79,142,247,.16)" stroke="#4f8ef7" class="dash"/>
+  <text x="50" y="240" class="notew" style="font-size:11.5px;fill:#4f8ef7;font-weight:700">1H DEMAND ZONE</text>
+  <!-- CHoCH -->
+  <line x1="260" y1="145" x2="455" y2="145" class="dash" stroke="#ff9f43" stroke-width="2"/>
+  <text x="272" y="139" class="lbl org">CHoCH — first LH broken</text>
+  <!-- BOS -->
+  <line x1="470" y1="120" x2="553" y2="120" class="dash" stroke="#26a69a" stroke-width="2"/>
+  <text x="482" y="113" class="lbl hh">BOS ✓</text>
+  <!-- entry / stop -->
+  <line x1="600" y1="125" x2="760" y2="125" class="dash" stroke="#e6e9ef" stroke-width="2"/>
+  <text x="640" y="140" class="lbl">ENTRY on retest</text>
+  <line x1="320" y1="250" x2="760" y2="250" class="dash" stroke="#ef5350" stroke-width="2"/>
+  <text x="330" y="268" class="lbl ll">STOP below the low (~$4–6 on gold = tiny risk, bigger size)</text>
+  <!-- price -->
+  <polyline class="price" points="40,60 110,130 150,100 220,180 260,145 330,230 380,200 400,215 470,120 510,160 580,90 620,125 700,50"/>
+  <circle class="pt" cx="150" cy="100" r="4"/><circle class="pt" cx="220" cy="180" r="4"/><circle class="pt" cx="260" cy="145" r="4"/>
+  <circle class="pt" cx="330" cy="230" r="4"/><circle class="pt" cx="470" cy="120" r="4"/><circle class="pt" cx="510" cy="160" r="4"/>
+  <circle class="pt" cx="620" cy="125" r="5" style="stroke:#f5c542"/>
+  <text x="100" y="152" class="lbl">L</text>
+  <text x="140" y="90" class="lbl ll">LH</text>
+  <text x="208" y="200" class="lbl ll">LL</text>
+  <text x="250" y="135" class="lbl ll">LH</text>
+  <text x="318" y="250" class="lbl ll" style="display:none">LL</text>
+  <text x="498" y="182" class="lbl hh">HL</text>
+  <text x="40" y="292" class="note">Same structure logic, just zoomed in. Waiting for the flip filters out the "zone fails and keeps dropping" trades.</text>
+  <text x="40" y="310" class="note">Smaller stop on the 15m = more lots for the same $1,000 risk — that's how a $10 move becomes meaningful money.</text>
+</svg>
+</div>
+
+<!-- ============ 5. SIZING MATH ============ -->
+<div class="card">
+<h2><span>5</span>The $4k math — same trade on a $25k, $50k and $100k account</h2>
+<p>1 lot of gold = 100 oz, so every $1 move = $100 per lot. Your buddy's $4k is a <b>$100k-account</b> number. The identical trade on your $25k challenge pays $1,000 — and that is correct, not small.</p>
+<svg viewBox="0 0 900 300" xmlns="http://www.w3.org/2000/svg">
+  <g class="bt">
+    <text x="80" y="30">ACCOUNT</text><text x="225" y="30">RISK 1%</text><text x="370" y="30">÷ (STOP $10 × $100)</text>
+    <text x="515" y="30">= LOTS</text><text x="660" y="30">× TARGET +$40</text><text x="805" y="30">= PROFIT</text>
+  </g>
+  <!-- row 1: $25k -->
+  <rect class="boxg" x="15" y="48" width="130" height="56"/><rect class="box" x="160" y="48" width="130" height="56"/><rect class="box" x="305" y="48" width="130" height="56"/>
+  <rect class="box" x="450" y="48" width="130" height="56"/><rect class="box" x="595" y="48" width="130" height="56"/><rect class="boxg" x="740" y="48" width="130" height="56"/>
+  <g class="bv">
+    <text x="80" y="72">$25,000</text><text x="225" y="72">$250</text><text x="370" y="80">250 ÷ 1,000</text>
+    <text x="515" y="72">0.25 lot</text><text x="660" y="72">+$40 move</text><text x="805" y="72">$1,000</text>
+  </g>
+  <g class="bs">
+    <text x="80" y="92">YOU start here</text><text x="225" y="92">max loss per trade</text><text x="515" y="92">(25 oz · $25 per $1)</text><text x="660" y="92">= 4R</text><text x="805" y="92">per winning trade</text>
+  </g>
+  <!-- row 2: $50k -->
+  <rect class="box" x="15" y="128" width="130" height="56"/><rect class="box" x="160" y="128" width="130" height="56"/><rect class="box" x="305" y="128" width="130" height="56"/>
+  <rect class="box" x="450" y="128" width="130" height="56"/><rect class="box" x="595" y="128" width="130" height="56"/><rect class="box" x="740" y="128" width="130" height="56"/>
+  <g class="bv">
+    <text x="80" y="152">$50,000</text><text x="225" y="152">$500</text><text x="370" y="160">500 ÷ 1,000</text>
+    <text x="515" y="152">0.50 lot</text><text x="660" y="152">+$40 move</text><text x="805" y="152">$2,000</text>
+  </g>
+  <g class="bs">
+    <text x="80" y="172">step 2 (after you pass)</text><text x="515" y="172">(50 oz · $50 per $1)</text><text x="660" y="172">= 4R</text>
+  </g>
+  <!-- row 3: $100k -->
+  <rect class="box" x="15" y="208" width="130" height="56"/><rect class="box" x="160" y="208" width="130" height="56"/><rect class="box" x="305" y="208" width="130" height="56"/>
+  <rect class="box" x="450" y="208" width="130" height="56"/><rect class="box" x="595" y="208" width="130" height="56"/><rect class="box" x="740" y="208" width="130" height="56" style="stroke:#f5c542"/>
+  <g class="bv">
+    <text x="80" y="232">$100,000</text><text x="225" y="232">$1,000</text><text x="370" y="240">1,000 ÷ 1,000</text>
+    <text x="515" y="232">1.0 lot</text><text x="660" y="232">+$40 move</text><text x="805" y="232" style="fill:#f5c542;font-weight:700">$4,000</text>
+  </g>
+  <g class="bs">
+    <text x="80" y="252">your buddy</text><text x="515" y="252">(100 oz · $100 per $1)</text><text x="660" y="252">= 4R</text><text x="805" y="252">the screenshot</text>
+  </g>
+  <!-- arrows -->
+  <g fill="#8a93a3">
+    <polygon points="148,71 157,76 148,81"/><polygon points="293,71 302,76 293,81"/><polygon points="438,71 447,76 438,81"/><polygon points="583,71 592,76 583,81"/><polygon points="728,71 737,76 728,81"/>
+    <polygon points="148,151 157,156 148,161"/><polygon points="293,151 302,156 293,161"/><polygon points="438,151 447,156 438,161"/><polygon points="583,151 592,156 583,161"/><polygon points="728,151 737,156 728,161"/>
+    <polygon points="148,231 157,236 148,241"/><polygon points="293,231 302,236 293,241"/><polygon points="438,231 447,236 438,241"/><polygon points="583,231 592,236 583,241"/><polygon points="728,231 737,236 728,241"/>
+  </g>
+  <text x="15" y="290" class="note">Same chart, same entry, same stop, same target. The ONLY variable is account size. If you copy his LOTS instead of his % → you blow the $25k in one trade.</text>
+</svg>
+<div class="tip">Lot formula to memorise: <b>Lots = (Account × Risk%) ÷ (Stop in $ × 100)</b>. On $25k with a $10 stop that's 0.25 lot. With a tight $5 stop from the 15m trigger it's 0.50 lot — same $250 risk, double the payout per $1.</div>
+</div>
+
+<!-- ============ 6. CHALLENGE LIFECYCLE ============ -->
+<div class="card">
+<h2><span>6</span>The prop-firm road — your GFT "2 STEPS GOAT" $25k (TradeLocker)</h2>
+<p>You're not trading your own money. You paid a fee, you prove you can hit a target <b>without breaking the risk rules</b>, then the firm funds you and splits the profit. Rules below are pulled from GFT's checkout API for the exact plan you bought.</p>
+<svg viewBox="0 0 900 270" xmlns="http://www.w3.org/2000/svg">
+  <rect class="box" x="20" y="45" width="190" height="115"/>
+  <rect class="box" x="240" y="45" width="190" height="115" style="stroke:#4f8ef7"/>
+  <rect class="box" x="460" y="45" width="190" height="115" style="stroke:#4f8ef7"/>
+  <rect class="boxg" x="680" y="45" width="190" height="115"/>
+  <g class="bt" style="font-size:13px">
+    <text x="115" y="70">1 · BUY CHALLENGE</text><text x="335" y="70">2 · PHASE 1</text><text x="555" y="70">3 · PHASE 2</text><text x="775" y="70">4 · FUNDED → PAID</text>
+  </g>
+  <g class="bv" style="font-size:12px">
+    <text x="115" y="95">$25k account · $170 fee</text><text x="115" y="113">fee refunded with</text><text x="115" y="131">your first payout</text>
+    <text x="335" y="95">Target +8% = $2,000</text><text x="335" y="113">min 3 trading days</text><text x="335" y="131">no time limit</text>
+    <text x="555" y="95">Target +6% = $1,500</text><text x="555" y="113">min 3 trading days</text><text x="555" y="131">no time limit</text>
+    <text x="775" y="95">No target — just survive</text><text x="775" y="113">80% split (up to 95%)</text><text x="775" y="131">bi-weekly payouts</text>
+  </g>
+  <g class="bs"><text x="115" y="150">(fail = $170 lesson, not −$25k)</text><text x="335" y="150">≈ 2 of your 4R trades</text><text x="555" y="150">≈ 2 of your 4R trades</text><text x="775" y="150">scale → $50k → $100k</text></g>
+  <g fill="#8a93a3"><polygon points="213,97 232,103 213,109"/><polygon points="433,97 452,103 433,109"/><polygon points="653,97 672,103 653,109"/></g>
+  <!-- rules bar -->
+  <rect x="20" y="180" width="850" height="42" rx="8" fill="rgba(239,83,80,.12)" stroke="#ef5350" stroke-width="1.5"/>
+  <text x="445" y="198" class="bv" style="fill:#ef5350;font-weight:700;font-size:12.5px">RULES THAT APPLY AT EVERY STAGE — break one and the account is closed</text>
+  <text x="445" y="215" class="bv" style="font-size:12px">Daily loss ≤ 4% ($1,000 on $25k)  ·  Max drawdown ≤ 10% ($2,500, static from start)  ·  no weekend-gap / news gambling on big size</text>
+  <text x="20" y="243" class="note">Payout reality on a funded $25k: +4% ($1,000) in a month → 80% split → ~$800 to you.</text>
+  <text x="20" y="260" class="note">Scale to $50k/$100k only after the $25k has paid you — prove the process first.</text>
+</svg>
+<div class="key">
+  <div><b>Why +8% is hard:</b> you must make $2,000 while never losing $1,000 in a day or $2,500 total. At 1% risk ($250) you can afford ~9 losses before you're out — plenty, <i>if</i> you size correctly.</div>
+  <div><b>Why +8% is doable:</b> at 1:4 that's two winning trades. The target isn't the hard part — not blowing the drawdown while you wait for A+ setups is.</div>
+</div>
+</div>
+
+<!-- ============ 7. EQUITY vs DRAWDOWN ============ -->
+<div class="card">
+<h2><span>7</span>Passing vs blowing the $25k — same setups, different lot size</h2>
+<p>Each step is one trade. Green risks $250 (0.25 lot) and wins $1,000. Red takes the exact same signals with 1.25 lot. Watch where each one ends up against your plan's rule lines.</p>
+<svg viewBox="0 0 900 265" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="#1e252e" stroke-width="1"><line x1="0" y1="75" x2="900" y2="75"/><line x1="0" y1="135" x2="900" y2="135"/></g>
+  <line x1="50" y1="46" x2="725" y2="46" class="dash" stroke="#26a69a" stroke-width="2"/>
+  <line x1="50" y1="107" x2="725" y2="107" stroke="#5a6472" stroke-width="1.5"/>
+  <line x1="50" y1="138" x2="725" y2="138" class="dash" stroke="#ff9f43" stroke-width="2"/>
+  <line x1="50" y1="185" x2="725" y2="185" class="dash" stroke="#ef5350" stroke-width="2"/>
+  <text x="735" y="50" class="lbl hh">TARGET $27,000 (+8%)</text>
+  <text x="735" y="111" class="lbl" style="fill:#8a93a3">START $25,000</text>
+  <text x="735" y="142" class="lbl org">DAY LIMIT $24,000 (−4%)</text>
+  <text x="735" y="189" class="lbl ll">MAX DD $22,500 (−10%)</text>
+  <!-- green path -->
+  <polyline fill="none" stroke="#26a69a" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="60,107 120,115 180,84 240,92 300,100 360,69 420,77 480,46"/>
+  <g fill="#0f131a" stroke="#26a69a" stroke-width="2">
+    <circle cx="120" cy="115" r="4"/><circle cx="180" cy="84" r="4"/><circle cx="240" cy="92" r="4"/><circle cx="300" cy="100" r="4"/><circle cx="360" cy="69" r="4"/><circle cx="420" cy="77" r="4"/><circle cx="480" cy="46" r="5"/>
+  </g>
+  <text x="492" y="66" class="lbl hh">PASSED ✓  3 wins · 4 losses</text>
+  <!-- red path -->
+  <polyline fill="none" stroke="#ef5350" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="60,107 120,146 170,185"/>
+  <g fill="#0f131a" stroke="#ef5350" stroke-width="2"><circle cx="120" cy="146" r="4"/><circle cx="170" cy="185" r="5"/></g>
+  <text x="182" y="198" class="lbl ll">✕ daily limit on trade 1 · account closed on trade 2</text>
+  <text x="50" y="222" class="note">RED: 1.25 lot on $25k = $125 per $1 → one normal $10 stop = −$1,250 = −5% → the 4% daily limit is gone in ONE trade. One more → −10% → account closed.</text>
+  <text x="50" y="240" class="note">GREEN: 0.25 lot, 1% risk, 1:4 reward — loses MORE often than it wins and still passes. The edge is the sizing, not the picks.</text>
+  <text x="50" y="258" class="note">The $1,000 daily limit = 4 full losses at 1%. Your personal rule is stricter: two losses in a day and you stop. Non-negotiable.</text>
+</svg>
+</div>
+
+<!-- ============ 8. TOP-DOWN ============ -->
+<div class="card">
+<h2><span>8</span>Top-down process — bias → zone → trigger</h2>
+<p>Three timeframes, three jobs. Each lower timeframe is only allowed to agree with the one above it.</p>
+<svg viewBox="0 0 900 250" xmlns="http://www.w3.org/2000/svg">
+  <polygon points="100,20 800,20 700,85 200,85" fill="rgba(38,166,154,.18)" stroke="#26a69a" stroke-width="1.5"/>
+  <polygon points="200,95 700,95 600,160 300,160" fill="rgba(79,142,247,.18)" stroke="#4f8ef7" stroke-width="1.5"/>
+  <polygon points="300,170 600,170 540,235 360,235" fill="rgba(245,197,66,.18)" stroke="#f5c542" stroke-width="1.5"/>
+  <g class="bv" style="font-weight:700;font-size:14px">
+    <text x="450" y="48" style="fill:#26a69a">DAILY / 4H  →  BIAS</text>
+    <text x="450" y="123" style="fill:#4f8ef7">1H  →  ZONE</text>
+    <text x="450" y="198" style="fill:#f5c542">15m / 5m  →  TRIGGER</text>
+  </g>
+  <g class="bv" style="font-size:12px">
+    <text x="450" y="70">HH/HL = longs only  ·  LH/LL = shorts only  ·  unclear = don't trade</text>
+    <text x="450" y="145">demand / supply zone + the nearest liquidity pool (equal highs/lows)</text>
+    <text x="450" y="220">sweep → CHoCH → BOS → enter on the retest</text>
+  </g>
+  <g class="note"><text x="715" y="120">Never take a 5m signal</text><text x="715" y="138">that fights the Daily bias.</text><text x="715" y="156">That is the #1 beginner leak.</text></g>
+  <g class="note"><text x="20" y="120">Do this BEFORE</text><text x="20" y="138">the session opens,</text><text x="20" y="156">not during it.</text></g>
+</svg>
+</div>
+
+<!-- ============ 9. SESSIONS ============ -->
+<div class="card">
+<h2><span>9</span>When gold actually moves — session map (Eastern Time)</h2>
+<p>Gold's volatility is concentrated in a few hours. Trading outside them is how beginners bleed small losses all day. Most gold traders only trade the NY window.</p>
+<svg viewBox="0 0 900 260" xmlns="http://www.w3.org/2000/svg">
+  <rect x="343" y="35" width="84" height="167" fill="rgba(245,197,66,.14)" stroke="#f5c542" class="dash"/>
+  <text x="346" y="30" class="lbl" style="fill:#f5c542;font-size:11.5px">BEST WINDOW 8:30–11:00</text>
+  <!-- session bars -->
+  <rect x="60" y="190" width="100" height="10" fill="#3a4556"/><rect x="693" y="190" width="167" height="10" fill="#3a4556"/>
+  <rect x="160" y="176" width="300" height="10" fill="#4f8ef7" opacity=".8"/>
+  <rect x="327" y="162" width="300" height="10" fill="#ff9f43" opacity=".85"/>
+  <g class="note" style="font-size:11px"><text x="14" y="199">Asia</text><text x="14" y="185">London</text><text x="14" y="171">NY</text></g>
+  <!-- volatility curve -->
+  <polyline fill="none" stroke="#e6e9ef" stroke-width="2.5" stroke-linejoin="round" points="60,150 127,148 160,110 193,118 260,130 327,118 343,60 377,48 410,62 427,80 460,112 527,130 593,138 627,146 693,152 860,152"/>
+  <text x="62" y="140" class="note">Asia: thin &amp; choppy — avoid</text>
+  <text x="170" y="98" class="note">London open 3:00 — first real move</text>
+  <text x="435" y="58" class="lbl org">NY open 8:30 — biggest gold moves of the day</text>
+  <text x="440" y="76" class="note">8:30 news days (CPI / NFP / FOMC):</text>
+  <text x="452" y="92" class="note">$50+ candles in minutes → sit out or size down</text>
+  <text x="640" y="128" class="note">Afternoon: volume fades → chop</text>
+  <!-- hour ticks -->
+  <g class="note" style="text-anchor:middle;font-size:11px">
+    <text x="60" y="225">12am</text><text x="160" y="225">3am</text><text x="260" y="225">6am</text><text x="360" y="225">9am</text><text x="460" y="225">12pm</text>
+    <text x="560" y="225">3pm</text><text x="660" y="225">6pm</text><text x="760" y="225">9pm</text><text x="860" y="225">12am</text>
+  </g>
+  <text x="60" y="250" class="note">Practical plan: mark your zones + liquidity at 8:00, trade 8:30–11:00 only, walk away. One or two A+ setups a day is the whole job.</text>
+</svg>
+</div>
+
+<!-- ============ CHEAT SHEET ============ -->
+<div class="card">
+<h2><span>★</span>Cheat sheet — what to do this week</h2>
+<div class="key">
+  <div><b>Learn:</b> open XAUUSD in TradeLocker (built-in TradingView charts), Daily → 1H → 15m. Label HH/HL/LH/LL, mark BOS and CHoCH, box equal highs/lows. 20 minutes a day.</div>
+  <div><b>Backtest:</b> bar-replay 100 examples of ONE setup (diagram 4). Log win/loss and R. You'll know your real win rate before risking a cent.</div>
+  <div><b>Chart first, trade later:</b> your $25k has <b>no time limit</b>, so 2–4 weeks of marking up charts before trade #1 costs you nothing. The $170 only dies if you break a rule.</div>
+  <div><b>Then trade it:</b> 0.25 lot per $10 of stop ($250 = 1%). Two losses in a day = done for the day. +8% → +6% → funded → scale to $50k.</div>
+</div>
+<div class="warn">The number on his screenshot is the <b>last</b> step of this chain, not the first. Everyone who skips to the last step pays for the firm's marketing budget.</div>
+</div>
+
+</body>
+</html>
