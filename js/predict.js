@@ -68,7 +68,18 @@ const Predict = (() => {
     return `Prediction test: ${s.right}/${s.n} right (${Math.round(s.acc * 100)}%)${s.trades ? ` · ${s.sumR >= 0 ? '+' : '−'}${Math.abs(s.sumR).toFixed(1)}R` : ''} · grade ${s.grade} (${s.gradeNote}) · ${s.open} open`;
   }
 
-  return { score, stats, line, isRight };
+  // re-pull predictions.js (works on file:// and Pages; cache-busted) so new calls show up without a page reload
+  function reload() {
+    return new Promise(resolve => {
+      const s = document.createElement('script');
+      s.src = 'predictions.js?v=' + Date.now();
+      s.onload = () => { s.remove(); resolve(window.PREDICTIONS || []); };
+      s.onerror = () => { s.remove(); resolve(window.PREDICTIONS || []); };
+      document.head.appendChild(s);
+    });
+  }
+
+  return { score, stats, line, isRight, reload };
 })();
 
 /* Test tab */

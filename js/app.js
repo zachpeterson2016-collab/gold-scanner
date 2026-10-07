@@ -30,6 +30,7 @@
       const [c15, c1h, c1d] = await Promise.all([Data.fetchLatest('15m'), Data.fetchLatest('1h'), Data.fetchLatest('1d')]);
       raw['15m'] = Data.merge(raw['15m'], c15); raw['1h'] = Data.merge(raw['1h'], c1h); raw['1d'] = Data.merge(raw['1d'], c1d);
       try { spot = await Data.fetchSpot(); } catch (e) { /* keep old spot */ }
+      if (window.Predict) await Predict.reload();
       analyse(); render();
       setDot('ok', 'live'); $('#updated').textContent = `updated ${Data.fmtClock(Date.now())} CT`;
     } catch (e) { console.error(e); setDot('err', e.message); $('#updated').textContent = 'feed error: ' + e.message; }
