@@ -171,6 +171,7 @@ footer{padding:8px 16px;border-top:1px solid var(--line);color:var(--mut);font-s
       <button data-tab="structure">Structure</button>
       <button data-tab="forecast">Forecast</button>
       <button data-tab="journal">Journal</button>
+      <button data-tab="predict" title="Prediction test — Copilot's calls graded by the market">Test</button>
       <button data-tab="backtest">Backtest</button>
       <button data-tab="settings">Settings</button>
       <a href="gold-trading-diagrams.html" target="_blank" title="Open the diagram cheat-sheet">Learn ↗</a>
@@ -179,6 +180,7 @@ footer{padding:8px 16px;border-top:1px solid var(--line);color:var(--mut);font-s
     <div class="tab" id="tab-structure"></div>
     <div class="tab" id="tab-forecast"></div>
     <div class="tab" id="tab-journal"></div>
+    <div class="tab" id="tab-predict"></div>
     <div class="tab" id="tab-backtest"></div>
     <div class="tab" id="tab-settings"></div>
   </aside>
@@ -196,6 +198,8 @@ footer{padding:8px 16px;border-top:1px solid var(--line);color:var(--mut);font-s
 <script src="js/ui.js"></script>
 <script src="js/ui-forecast.js"></script>
 <script src="js/ui-structure.js"></script>
+<script>document.write('<script src="predictions.js?v=' + Date.now() + '"><\/script>');</script>
+<script src="js/predict.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>

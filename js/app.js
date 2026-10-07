@@ -129,8 +129,9 @@
     const now = Date.now(), open = Data.isOpen(now), nx = Data.nextOpen(now);
     const check = Check.build({ results, ph, settings, bt, now, open, nextOpen: nx, days: btDays() });
     UI.setupCards(results, settings, off, { closed: open ? null : `reopens ${nx ? Data.fmtTime(nx) + ' CT' : 'soon'}`, check, onNews: render });
-    const active = $('#tab-journal').classList.contains('on'), btOn = $('#tab-backtest').classList.contains('on'), fcOn = $('#tab-forecast').classList.contains('on'), stOn = $('#tab-structure').classList.contains('on');
+    const active = $('#tab-journal').classList.contains('on'), btOn = $('#tab-backtest').classList.contains('on'), fcOn = $('#tab-forecast').classList.contains('on'), stOn = $('#tab-structure').classList.contains('on'), pdOn = $('#tab-predict').classList.contains('on');
     if (active) UI.journal(Setups.Journal.load(), settings, off);
+    if (pdOn) UI.predict({ list: window.PREDICTIONS || [], c15: cand['15m'], off, now });
     if (btOn && bt) UI.backtest(bt, settings, btDays(), settings.btGrade);
     if (fcOn) UI.forecast({ tf, fc: fc[tf], scen, live: preds.filter(p => p.tf === tf), back: back[tf] || [], off, settings, onPin: pin, onFocus: focusOn });
     if (stOn) UI.structure({ tf, S, ph, pst, frm, closed, off, onTf: setTf });
