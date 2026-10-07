@@ -201,7 +201,15 @@
     $('#zoomIn').onclick = () => Chart.zoom(1 / 1.3); $('#zoomOut').onclick = () => Chart.zoom(1.3); $('#toEnd').onclick = () => Chart.toEnd();
     document.querySelectorAll('.tabs button').forEach(b => b.onclick = () => openTab(b.dataset.tab));
     $('#bias').addEventListener('click', () => openTab('structure'));
-    window.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') Chart.zoom(1.3); if (e.key === 'ArrowRight') Chart.zoom(1 / 1.3); if (e.key === 'End') Chart.toEnd(); });
+    window.addEventListener('keydown', e => {
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+      if (e.key === 'ArrowLeft') { e.preventDefault(); Chart.pan(e.shiftKey ? -1 : -0.5); }
+      else if (e.key === 'ArrowRight') { e.preventDefault(); Chart.pan(e.shiftKey ? 1 : 0.5); }
+      else if (e.key === '+' || e.key === '=') Chart.zoom(1 / 1.3);
+      else if (e.key === '-') Chart.zoom(1.3);
+      else if (e.key === 'End') Chart.toEnd();
+      else if (e.key === 'Home') Chart.toStart();
+    });
   }
   function openTab(name) {
     document.querySelectorAll('.tabs button').forEach(x => x.classList.toggle('on', x.dataset.tab === name));
@@ -216,7 +224,7 @@
   }
 
   async function main() {
-    Chart.init($('#chart'), $('#hover'));
+    Chart.init($('#chart'), $('#hover'), $('#hscroll'));
     wire(); clock(); setInterval(clock, 1000);
     try {
       await loadHistory();

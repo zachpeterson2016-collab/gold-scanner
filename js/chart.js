@@ -1,16 +1,21 @@
 /* Canvas chart: candles + structure overlays, pan/zoom, crosshair. Prices are PAXG internally; the axis/hover add `offset` to show spot-equivalent. */
 const Chart = (() => {
   const C = { bg: '#0b0e13', grid: '#161c24', txt: '#8a93a3', up: '#26a69a', dn: '#ef5350', gold: '#f5c542', blu: '#4f8ef7', org: '#ff9f43', pur: '#b388ff', red: '#ef5350', grn: '#26a69a' };
-  let cv, ctx, hoverEl, dpr = 1, W = 0, H = 0, onView = null;
+  let cv, ctx, hoverEl, dpr = 1, W = 0, H = 0, onView = null, sb = null;
   const PAD = { l: 8, r: 72, t: 10, b: 26 };
   let D = { tf: '15m', c: [], S: null, offset: 0, setups: [], ov: {}, htf: null, fc: null, scen: null, preds: [], focus: null, ph: null, forming: [], gran: 900000, news: [] }, view = { start: 0, count: 160 }, follow = true, mouse = null, drag = null, fut = 0;
   function idxAt(c, t) { let lo = 0, hi = c.length - 1, r = -1; while (lo <= hi) { const m = (lo + hi) >> 1; if (c[m].t <= t) { r = m; lo = m + 1; } else hi = m - 1; } return r; }
 
-  function init(canvas, hover) {
+  function init(canvas, hover, scroll) {
     cv = canvas; ctx = cv.getContext('2d'); hoverEl = hover;
     new ResizeObserver(resize).observe(cv.parentElement);
     resize();
-    cv.addEventListener('wheel', e => { e.preventDefault(); const f = e.deltaY > 0 ? 1.15 : 1 / 1.15; zoomAt(f, e.offsetX); }, { passive: false });
+    cv.addEventListener('wheel', e => {
+      e.preventDefault();
+      // Shift+wheel or a sideways trackpad swipe scrolls through time; plain wheel zooms
+      if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) { pan((e.shiftKey ? (e.deltaY || e.deltaX) : e.deltaX) > 0 ? 0.2 : -0.2); return; }
+      const f = e.deltaY > 0 ? 1.15 : 1 / 1.15; zoomAt(f, e.offsetX);
+    }, { passive: false });
     cv.addEventListener('mousedown', e => { drag = { x: e.offsetX, start: view.start }; });
     window.addEventListener('mouseup', () => { drag = null; });
     cv.addEventListener('mousemove', e => {
@@ -20,6 +25,41 @@ const Chart = (() => {
     });
     cv.addEventListener('mouseleave', () => { mouse = null; hoverEl.textContent = ''; draw(); });
     cv.addEventListener('dblclick', () => { toEnd(); });
+    if (scroll) initScroll(scroll);
+  }
+  // Scrollbar under the time axis. Pointer events so it works with a finger on the phone too.
+  function initScroll(el) {
+    const track = el.querySelector('.track'), thumb = el.querySelector('.thumb');
+    sb = { track, thumb, key: '' };
+    let grab = null;
+    const span = () => Math.max(1, track.clientWidth - thumb.offsetWidth); // pixels the thumb can travel
+    track.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      if (e.target !== thumb) { // click on the track: jump so the thumb centres on the pointer, then keep dragging from there
+        const x = e.clientX - track.getBoundingClientRect().left;
+        const was = view.start; setStart(Math.round((x - thumb.offsetWidth / 2) / span() * maxStart()));
+        if (view.start !== was) { userMoved(); draw(); }
+      }
+      grab = { x0: e.clientX, start0: view.start, sp: span() };
+      track.classList.add('drag'); track.setPointerCapture(e.pointerId);
+    });
+    track.addEventListener('pointermove', e => {
+      if (!grab) return;
+      const was = view.start; setStart(Math.round(grab.start0 + (e.clientX - grab.x0) / grab.sp * maxStart()));
+      if (view.start !== was) { userMoved(); draw(); }
+    });
+    const end = () => { grab = null; track.classList.remove('drag'); };
+    track.addEventListener('pointerup', end); track.addEventListener('pointercancel', end);
+    track.addEventListener('wheel', e => { e.preventDefault(); pan((e.deltaY || e.deltaX) > 0 ? 0.2 : -0.2); }, { passive: false });
+    el.querySelectorAll('.hs').forEach(b => b.addEventListener('click', () => pan(0.5 * +b.dataset.dir)));
+  }
+  function syncScroll() {
+    if (!sb) return;
+    const total = D.c.length + fut, tw = sb.track.clientWidth;
+    let w = tw, left = 0;
+    if (total && tw) { w = Math.max(24, Math.min(tw, tw * Math.min(view.count, total) / total)); const ms = maxStart(); left = ms ? (tw - w) * (view.start / ms) : 0; }
+    const key = Math.round(left) + '/' + Math.round(w);
+    if (key !== sb.key) { sb.key = key; sb.thumb.style.width = Math.round(w) + 'px'; sb.thumb.style.left = Math.round(left) + 'px'; }
   }
   function resize() {
     const r = cv.getBoundingClientRect(); dpr = window.devicePixelRatio || 1;
@@ -42,6 +82,9 @@ const Chart = (() => {
     draw();
   }
   function zoom(f) { zoomAt(f, PAD.l + plotW() * 0.5); }
+  // move by a fraction of the visible window (negative = back in time)
+  function pan(frac) { const was = view.start; setStart(view.start + Math.round(view.count * frac)); if (view.start !== was) { userMoved(); draw(); } }
+  function toStart() { setStart(0); draw(); }
   function toEnd() { follow = true; setStart(maxStart()); draw(); }
   // Show the most recent `bars` candles (plus the forecast slots), e.g. for the 1D … 5Y range buttons.
   function showLast(bars) { view.count = Math.max(30, Math.min(maxCount(), Math.round(bars + fut))); toEnd(); }
@@ -55,6 +98,7 @@ const Chart = (() => {
 
   function draw() {
     if (!ctx) return;
+    syncScroll();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.fillStyle = C.bg; ctx.fillRect(0, 0, W, H);
     const c = D.c, n = c.length; if (!n) { text('loading candles…', W / 2 - 50, H / 2, C.txt); return; }
@@ -217,5 +261,5 @@ const Chart = (() => {
   function niceStep(raw) { const p = Math.pow(10, Math.floor(Math.log10(raw))); const m = raw / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
   function line(x0, y0, x1, y1) { ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke(); }
   function text(s, x, y, col, size = 12, weight = 'normal') { ctx.fillStyle = col; ctx.font = `${weight} ${size}px system-ui, Segoe UI, sans-serif`; ctx.fillText(s, x, y); }
-  return { init, setData, draw, zoom, toEnd, focus, showLast, onUserView: cb => { onView = cb; }, get view() { return view; }, get state() { return { start: view.start, count: view.count, follow, fut, n: D.c.length, W, H, maxStart: maxStart(), bw: plotW() / view.count }; } };
+  return { init, setData, draw, zoom, pan, toStart, toEnd, focus, showLast, onUserView: cb => { onView = cb; }, get view() { return view; }, get state() { return { start: view.start, count: view.count, follow, fut, n: D.c.length, W, H, maxStart: maxStart(), bw: plotW() / view.count }; } };
 })();
