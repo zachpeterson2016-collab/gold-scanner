@@ -16,7 +16,7 @@ const UI = (() => {
     DONE: ['Last trigger hit target', 'That trade already completed. Wait for a fresh pullback.']
   };
 
-  function bias(S15, S1h, SD, spotOff, daily, ph) {
+  function bias(S15, S1h, SD, spotOff, daily, ph, pend) {
     const chip = (tf, k, S) => {
       const d = Structure.describe(S), p = ph && ph[k] ? ph[k][ph[k].length - 1] : null, L = Structure.phaseLabel(p), trend = p && p.trend ? p.trend : d.trend;
       const chop = L.cls === 'range', cls = chop ? 'range' : L.cls === 'warn' ? 'warn' : L.cls === 'shift' ? 'shift' : trend === 'up' ? 'up' : 'down';
@@ -24,7 +24,13 @@ const UI = (() => {
       const word = L.cls === 'warn' ? '<span class="org">⚠ warning</span>' : L.cls === 'shift' ? '<span class="pur">⏳ shifting</span>' : `<span class="${trend === 'up' ? 'grn' : 'red'}">healthy</span>`;
       return `<span class="chip ${cls}" title="${esc(L.short)} — click for the full reading"><span class="arrow">${arrow}</span><b>${tf}</b> ${chop ? '<span class="mut">CHOP</span>' : `${trend.toUpperCase()} · ${word}`}</span>`;
     };
-    $('#bias').innerHTML = chip('Daily', '1d', SD) + chip('1H', '1h', S1h) + chip('15m', '15m', S15) + `<span class="chip"><span class="mut">Trade in the 1H direction${daily === 'bonus' ? '' : ' · Daily must agree'} · click a chip for details</span></span>`;
+    // live-bar heads-up: the open bar is through a level, but it only counts if it closes there
+    const pchip = (tf, k) => {
+      const q = pend && pend[k]; if (!q) return '';
+      const side = q.dir === 'down' ? 'below' : 'above', lv = (q.level + spotOff).toFixed(1);
+      return `<span class="chip shift" title="Heads-up only: it becomes a ${q.type} only if the ${tf} bar CLOSES ${side} ${lv}"><span class="arrow">⏳</span><b>${tf} ${q.type} ${q.dir === 'up' ? '↑' : '↓'} forming</b> <span class="pur">· bar ${side} ${lv} · closes in ${q.minsLeft} min</span></span>`;
+    };
+    $('#bias').innerHTML = chip('Daily', '1d', SD) + chip('1H', '1h', S1h) + chip('15m', '15m', S15) + pchip('1H', '1h') + pchip('15m', '15m') + `<span class="chip"><span class="mut">Trade in the 1H direction${daily === 'bonus' ? '' : ' · Daily must agree'} · click a chip for details</span></span>`;
   }
 
   function setupCards(results, s, off, extra) {

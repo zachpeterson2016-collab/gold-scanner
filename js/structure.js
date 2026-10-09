@@ -229,6 +229,16 @@ const Structure = (() => {
     }
     return out;
   }
+  // Live-bar heads-up: the unclosed bar is already trading through the phase's key (→ CHoCH) or far (→ BOS) level.
+  // It only becomes an event if the bar CLOSES there, so this is a warning, not a signal.
+  function pending(p, live, lastClosed, gran, now) {
+    if (!p || !p.trend || !live || (lastClosed && live.t <= lastClosed.t)) return null;
+    const minsLeft = Math.max(0, Math.ceil((live.t + gran - now) / 60000));
+    const against = p.trend === 'up' ? 'down' : 'up';
+    if (p.key && (against === 'down' ? live.c < p.key.p : live.c > p.key.p)) return { type: 'CHoCH', dir: against, level: p.key.p, swing: p.key, barT: live.t, minsLeft };
+    if (p.far && (p.trend === 'up' ? live.c > p.far.p : live.c < p.far.p)) return { type: 'BOS', dir: p.trend, level: p.far.p, swing: p.far, barT: live.t, minsLeft };
+    return null;
+  }
   const WARN = { up: { failed: 'LH formed', deep: 'LL by wick', sweep: 'HL swept' }, down: { failed: 'HL formed', deep: 'HH by wick', sweep: 'LH swept' } };
   // Short words for chips / hover / ribbon legend.
   function phaseLabel(p) {
@@ -239,5 +249,5 @@ const Structure = (() => {
     if (p.warn.length) return { short: `⚠ WARNING · ${warnTxt}`, cls: 'warn', warnTxt };
     return { short: p.ext ? 'HEALTHY · in discovery' : 'HEALTHY', cls: p.trend, warnTxt };
   }
-  return { atr, pivots, analyze, stateAt, nextLiquidity, swingBefore, lastEvent, lastSweep, describe, equalLevelsAt, phases, phaseStats, forming, phaseLabel, WARN };
+  return { atr, pivots, analyze, stateAt, nextLiquidity, swingBefore, lastEvent, lastSweep, describe, equalLevelsAt, phases, phaseStats, forming, pending, phaseLabel, WARN };
 })();

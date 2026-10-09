@@ -8,7 +8,7 @@
   const cand = { '15m': [], '1h': [], '1d': [] };  // market-hours only
   const S = {}; let ctx = null, results = [], spot = null, offset = 0, tf = '15m', bt = null, btKey = '';
   let closed = { '15m': [], '1h': [], '1d': [] }, fc = {}, scen = null, preds = [], back = {}, backKey = '', focusPred = null;
-  const ph = {}, pst = {}, frm = {}; let phaseKey = {};   // structure reading layer: per-bar phases, chart-specific odds, forming swings
+  const ph = {}, pst = {}, frm = {}, pend = {}; let phaseKey = {}; const pendSeen = new Set();   // structure reading layer: per-bar phases, chart-specific odds, forming swings, live-bar pending CHoCH/BOS
   const HTF = { '15m': '1h', '1h': '1d', '1d': null }, TFNAME = { '15m': '15m', '1h': '1H', '1d': 'D' };
   const ov = { swings: true, events: true, liq: true, htf: true, setup: true, sessions: false, forecast: true };
   const seen = new Set(JSON.parse(localStorage.getItem('gs_seen') || '[]'));
@@ -118,6 +118,17 @@
     }
   }
   const htfFor = k => HTF[k] ? { name: TFNAME[HTF[k]], S: S[HTF[k]], ph: ph[HTF[k]], gran: Data.GRAN[HTF[k]] * 1000 } : null;
+  // Live-bar heads-up: is the still-open 1H / 15m bar trading through a structure level right now? Toast once per bar.
+  function pendingUpdate(now) {
+    for (const k of ['1h', '15m']) {
+      const a = cand[k], cl = closed[k];
+      pend[k] = Structure.pending(ph[k] && ph[k][ph[k].length - 1], a[a.length - 1], cl[cl.length - 1], Data.GRAN[k] * 1000, now);
+      const q = pend[k]; if (!q) continue;
+      const id = `${k}|${q.type}|${q.dir}|${q.barT}`; if (pendSeen.has(id)) continue;
+      pendSeen.add(id);
+      UI.toast(`⏳ ${TFNAME[k]} ${q.type} ${q.dir === 'up' ? '↑' : '↓'} forming`, `The open ${TFNAME[k]} bar is ${q.dir === 'down' ? 'below' : 'above'} ${(q.level + offset).toFixed(1)} — it only counts if it CLOSES there (${q.minsLeft} min left). Heads-up, not a trade.`, 20000);
+    }
+  }
 
   function render() {
     if (!S['15m']) return;
@@ -126,8 +137,9 @@
     const lp = cand['15m'].length ? cand['15m'][cand['15m'].length - 1].c : null;
     $('#paxg').textContent = lp ? `PAXG ${lp.toFixed(2)}` : 'PAXG —';
     $('#offset').textContent = spot && lp ? `(spot − PAXG = ${(spot.price - lp) >= 0 ? '+' : ''}${(spot.price - lp).toFixed(2)}${settings.spotAdjust ? ', chart adjusted' : ''})` : '';
-    UI.bias(S['15m'], S['1h'], S['1d'], off, settings.daily, ph);
     const now = Date.now(), open = Data.isOpen(now), nx = Data.nextOpen(now);
+    pendingUpdate(now);
+    UI.bias(S['15m'], S['1h'], S['1d'], off, settings.daily, ph, pend);
     const check = Check.build({ results, ph, settings, bt, now, open, nextOpen: nx, days: btDays() });
     UI.setupCards(results, settings, off, { closed: open ? null : `reopens ${nx ? Data.fmtTime(nx) + ' CT' : 'soon'}`, check, onNews: render });
     const active = $('#tab-journal').classList.contains('on'), btOn = $('#tab-backtest').classList.contains('on'), fcOn = $('#tab-forecast').classList.contains('on'), stOn = $('#tab-structure').classList.contains('on'), pdOn = $('#tab-predict').classList.contains('on');
@@ -236,6 +248,6 @@
     } catch (e) { console.error(e); setDot('err', e.message); $('#updated').textContent = 'load failed: ' + e.message; $('#tab-setup').innerHTML = `<div class="warn">Could not load candles: ${e.message}. Check your internet connection, then reload.</div>`; }
     setInterval(refresh, 60000);
   }
-  window.GS = { settings, raw, cand, S, ph, pst, frm, get ctx() { return ctx; }, get results() { return results; }, get bt() { return bt; }, get fc() { return fc; }, get scen() { return scen; }, get preds() { return preds; }, get back() { return back; }, get closed() { return closed; }, get range() { return range; }, refresh, analyse, render, pin, openTab, applyRange, loadDeep, loadDeepIntraday, btDays };
+  window.GS = { settings, raw, cand, S, ph, pst, frm, pend, get ctx() { return ctx; }, get results() { return results; }, get bt() { return bt; }, get fc() { return fc; }, get scen() { return scen; }, get preds() { return preds; }, get back() { return back; }, get closed() { return closed; }, get range() { return range; }, refresh, analyse, render, pin, openTab, applyRange, loadDeep, loadDeepIntraday, btDays };
   main();
 })();
