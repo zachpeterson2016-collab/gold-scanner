@@ -38,5 +38,17 @@
         "conf":  2,
         "why":  "1H and 15m both down but 1H is CHOP after overnight CHoCH; no clean GO setup, so stand aside until a confirmed break.",
         "band":  12
+    },
+    {
+        "id":  "p004",
+        "t":  "2026-10-12T18:59:22-05:00",
+        "made":  "Mon Oct 12, 6:59 PM CT",
+        "side":  "flat",
+        "px":  4172.5,
+        "off":  4.74,
+        "hours":  4,
+        "conf":  2,
+        "why":  "15m shifted up (CHoCH up) but 1H remains CHOP-down and card is NO-GO; stand aside until either 15m BOS up or fresh confirmed 15m CHoCH-down close.",
+        "band":  10
     }
 ]
